@@ -7,7 +7,7 @@ from django.utils.timesince import timesince
 from account.models import User
 
 from .models import Room, Message
-from .templatetegs.chatextras import initials
+from .templatetags.chatextras import initials
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):

@@ -28,6 +28,10 @@ const chatSubmitElement = document.querySelector('#chat_message_submit')
  * Functions
  */
 
+function scrollToBottom() {
+    chatLogElement.scrollTop = chatLogElement.scrollHeight
+}
+
 function getCookie(name) {
     var cookieValue = null
 
@@ -101,6 +105,7 @@ function onChatMessage(data) {
             `
         }
     }
+    scrollToBottom()
 }
 
 
@@ -136,6 +141,7 @@ async function joinChatRoom() {
 
     chatSocket.onopen = function(e) {
         console.log('onOpen - chat socket was opened');
+        scrollToBottom()
     }
 
     chatSocket.onclose = function(e) {
@@ -173,4 +179,5 @@ chatJoinElement.onclick = function(e) {
 chatSubmitElement.onclick = function(e) {
     e.preventDefault()
     sendMessage()
+    return false
 }
