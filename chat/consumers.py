@@ -2,6 +2,7 @@ import json
 
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+
 from django.utils.timesince import timesince
 
 from account.models import User
@@ -13,6 +14,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'chat_{self.room_name}'
+        self.user = self.scope['user']
 
         await self.get_room()
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -20,6 +22,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+        if not self.user.is_staff:
+            await self.set_room_closed()
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -58,6 +63,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     @sync_to_async
     def get_room(self):
         self.room = Room.objects.get(uuid=self.room_name)
+
+
+    @sync_to_async
+    def set_room_closed(self):
+        self.room = Room.objects.get(uuid=self.room_name)
+        self.room.status = Room.CLOSED
+        self.room.save()
+    
 
     @sync_to_async
     def create_message(self, sent_by, message, agent):

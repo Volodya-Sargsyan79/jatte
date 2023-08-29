@@ -23,9 +23,9 @@ class Room(models.Model):
     CLOSED = 'closed'
 
     CHOICES_STATUS = (
-        (WAITING,'Waiting'),
+        (WAITING, 'Waiting'),
         (ACTIVE, 'Active'),
-        (CLOSED, 'Closed')
+        (CLOSED, 'Closed'),
     )
 
     uuid = models.CharField(max_length=255)
